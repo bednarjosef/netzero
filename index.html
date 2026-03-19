@@ -64,14 +64,14 @@
 
             ws.onmessage = (event) => {
                 try {
-                    const data = JSON.parse(event.data);
-                    if (data.type === "status") {
-                        printToTerminal(`[STATUS] ${data.message}`, "status-msg");
-                    } else if (data.type === "data") {
-                        printToTerminal(data.payload, "data-msg");
+                    const jsonData = JSON.parse(event.data);
+                    if (jsonData.type === "status") {
+                        printToTerminal(`[STATUS] ${jsonData.status}`, "status-msg");
+                    } else if (jsonData.type === "data") {
+                        printToTerminal(jsonData.data, "data-msg");
                     }
                 } catch (e) {
-                    printToTerminal(`[RAW] ${event.data}`, "data-msg");
+                    printToTerminal(`[RAW] ${event.data}`, "error-msg");
                 }
             };
 
