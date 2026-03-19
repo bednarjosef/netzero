@@ -6,6 +6,7 @@ from asyncio import Queue
 from threading import Thread, Event
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from utils import ensure_root
 from netzero import NetZero
@@ -53,6 +54,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title='NetZero API', lifespan=lifespan)
 netzero = NetZero(status_callback=handle_status, data_callback=handle_data)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.websocket('/ws/v1/stream')
@@ -105,4 +114,4 @@ def stop_scan():
 
 if __name__ == '__main__':
     ensure_root()
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=80)
