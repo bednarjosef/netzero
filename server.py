@@ -57,8 +57,8 @@ netzero = NetZero(status_callback=handle_status, data_callback=handle_data)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["*"], 
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
