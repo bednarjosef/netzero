@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from asyncio import Queue
 from threading import Thread, Event
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
 
 from utils import ensure_root
 from netzero import NetZero
@@ -64,6 +65,11 @@ async def websocket_stream(websocket: WebSocket):
     except WebSocketDisconnect:
         if websocket in active_websockets:
             active_websockets.remove(websocket)
+
+
+@app.get('/')
+def serve_dashboard():
+    return FileResponse('index.html')
 
 
 # REST

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetZero Dashboard</title>
+    <style>
+        body {
+            background-color: #0d1117; color: #c9d1d9;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; padding: 20px;
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 10px; margin-bottom: 20px;}
+        h1 { margin: 0; color: #58a6ff; }
+        .controls { margin-bottom: 20px; }
+        button {
+            background-color: #238636; color: white; border: none;
+            padding: 10px 20px; font-weight: bold; cursor: pointer;
+            border-radius: 6px; margin-right: 10px; font-family: inherit;
+        }
+        button.stop { background-color: #da3633; }
+        button:active { opacity: 0.8; }
+        #terminal {
+            background-color: #010409; border: 1px solid #30363d;
+            border-radius: 6px; padding: 15px; height: 60vh;
+            overflow-y: auto; white-space: pre-wrap; font-size: 14px;
+        }
+        .status-msg { color: #8b949e; font-style: italic; }
+        .data-msg { color: #7ee787; }
+        .error-msg { color: #ff7b72; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>NetZero Terminal</h1>
+        <span id="connection-status" style="color: #ff7b72;">Disconnected</span>
+    </div>
+
+    <div class="controls">
+        <button onclick="startScan()">Start Scan</button>
+        <button class="stop" onclick="stopScan()">Stop Scan</button>
+        <button onclick="clearTerminal()" style="background-color: #21262d;">Clear</button>
+    </div>
+
+    <div id="terminal"></div>
+
+    <script>
+        // Dynamically get the IP address from the browser URL!
+        const host = window.location.host; 
+        const terminal = document.getElementById('terminal');
+        const statusIndicator = document.getElementById('connection-status');
+        
+        let ws;
+
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://${host}/ws/stream`);
+            
+            ws.onopen = () => {
+                statusIndicator.innerText = "Connected";
+                statusIndicator.style.color = "#7ee787";
+                printToTerminal("[SYSTEM] WebSocket connection established.", "status-msg");
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === "status") {
+                        printToTerminal(`[STATUS] ${data.message}`, "status-msg");
+                    } else if (data.type === "data") {
+                        printToTerminal(data.payload, "data-msg");
+                    }
+                } catch (e) {
+                    printToTerminal(`[RAW] ${event.data}`, "data-msg");
+                }
+            };
+
+            ws.onclose = () => {
+                statusIndicator.innerText = "Disconnected";
+                statusIndicator.style.color = "#ff7b72";
+                printToTerminal("[SYSTEM] Connection lost. Reconnecting in 3s...", "error-msg");
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        async function startScan() {
+            try {
+                const res = await fetch(`http://${host}/api/v1/scan/start`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) printToTerminal(`[ERROR] ${data.detail}`, "error-msg");
+            } catch (e) {
+                printToTerminal("[ERROR] Failed to send start command.", "error-msg");
+            }
+        }
+
+        async function stopScan() {
+            try {
+                const res = await fetch(`http://${host}/api/v1/scan/stop`, { method: 'POST' });
+                const data = await res.json();
+                if (!res.ok) printToTerminal(`[ERROR] ${data.detail}`, "error-msg");
+            } catch (e) {
+                printToTerminal("[ERROR] Failed to send stop command.", "error-msg");
+            }
+        }
+
+        function printToTerminal(text, className) {
+            const span = document.createElement('div');
+            span.className = className;
+            span.innerText = text;
+            terminal.appendChild(span);
+            // Auto-scroll to bottom
+            terminal.scrollTop = terminal.scrollHeight; 
+        }
+
+        function clearTerminal() {
+            terminal.innerHTML = "";
+        }
+
+        // Connect as soon as the page loads
+        connectWebSocket();
+    </script>
+</body>
+</html>

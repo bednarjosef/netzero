@@ -20,12 +20,11 @@ async def listen_to_websocket():
             while True:
                 raw_msg = await ws.recv()
                 try:
-                    # Parse the JSON your server sent
                     data = json.loads(raw_msg)
                     if data.get("type") == "status":
-                        print(f"\n[PI STATUS] {data['message']}")
+                        print(f"[STATUS] {data['status']}")
                     elif data.get("type") == "data":
-                        print(f"\n[LIVE DATA] {data['payload']}")
+                        print(f"[DATA] {data['data']}")
                 except json.JSONDecodeError:
                     print(f"\n[RAW] {raw_msg}")
                     
