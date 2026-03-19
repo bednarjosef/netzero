@@ -1,4 +1,4 @@
-import subprocess
+import os, sys, subprocess
 
 from contextlib import contextmanager
 from threading import Thread, Event
@@ -7,6 +7,13 @@ from scapy.layers.dot11 import Dot11, Dot11Beacon, RadioTap
 from scapy.packet import Packet
 
 CHANNELS_2GHz = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+
+# works on linux/macOS only?
+def ensure_root():
+    if os.geteuid() != 0:
+        print('The program must be run with sudo. Try sudo .venv/bin/python3 server.py')
+        sys.exit(1)
 
 
 def get_wifi_interfaces():
