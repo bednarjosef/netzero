@@ -54,7 +54,7 @@
         let ws;
 
         function connectWebSocket() {
-            ws = new WebSocket(`ws://${host}/ws/stream`);
+            ws = new WebSocket(`ws://${host}/ws/v1/stream`);
             
             ws.onopen = () => {
                 statusIndicator.innerText = "Connected";

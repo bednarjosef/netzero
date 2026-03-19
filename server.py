@@ -55,14 +55,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title='NetZero API', lifespan=lifespan)
 netzero = NetZero(status_callback=handle_status, data_callback=handle_data)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"], 
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 @app.websocket('/ws/v1/stream')
 async def websocket_stream(websocket: WebSocket):

@@ -6,7 +6,7 @@ import json
 import sys
 
 PI_IP = '10.42.0.162'  
-PORT = 8000
+PORT = 80
 
 HTTP_URL = f"http://{PI_IP}:{PORT}/api/v1"
 WS_URL = f"ws://{PI_IP}:{PORT}/ws/v1/stream"
