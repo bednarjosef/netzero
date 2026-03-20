@@ -4,7 +4,7 @@ from threading import Thread, Event
 
 from scapy.layers.dot11 import Dot11Beacon
 from scapy.packet import Packet
-from scapy.all import sniff, conf
+from scapy.all import sniff
 
 from utils import get_wifi_interfaces, channel_hopper, is_packet_dot11, get_bssid, parse_ssid, parse_crypto, get_rssi
 
@@ -12,7 +12,6 @@ from utils import get_wifi_interfaces, channel_hopper, is_packet_dot11, get_bssi
 
 class NetZero:
     def __init__(self, status_callback, data_callback):  # status callback (interface, monitor mode, channel etc.), data callback (scanned networks, clients etc.)
-        conf.use_pcap = True
         self.set_status = status_callback
         self.add_data = data_callback
         self.interface = 'wlan0'  # make selection for this
