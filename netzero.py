@@ -64,7 +64,7 @@ class NetZero:
         subprocess.run(['ip', 'link', 'set', self.interface, 'down'])
         subprocess.run(['iw', 'dev', self.interface, 'del'])
         subprocess.run(['ip', 'link', 'set', managed_interface, 'up'])
-        subprocess.run(['nmcli', 'device', 'set', self.interface, 'managed', 'yes'])
+        subprocess.run(['nmcli', 'device', 'set', managed_interface, 'managed', 'yes'])
 
         self.interface = managed_interface
         self.set_status(f'Monitor mode disabled.')
