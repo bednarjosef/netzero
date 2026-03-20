@@ -5,16 +5,18 @@ from threading import Thread, Event
 from scapy.layers.dot11 import Dot11Beacon
 from scapy.packet import Packet
 from scapy.all import sniff
+from scapy.config import conf
 
 from utils import get_wifi_interfaces, channel_hopper, is_packet_dot11, get_bssid, parse_ssid, parse_crypto, get_rssi
 
 
-
 class NetZero:
     def __init__(self, status_callback, data_callback):  # status callback (interface, monitor mode, channel etc.), data callback (scanned networks, clients etc.)
+        # conf.use_pcap = True
+        conf.sniff_promisc = False
         self.set_status = status_callback
         self.add_data = data_callback
-        self.interface = 'wlan0'  # make selection for this
+        self.interface = 'wlp193s0'  # make selection for this
         self.networks = {}
 
         self.current_task = 'idle'
@@ -35,7 +37,6 @@ class NetZero:
     def stop_current_task(self):
         self.set_status('Stopping...')
         self.stop_flag.set()
-        self.set_current_task('idle')
 
     def get_interface(self):
         return self.interface
@@ -115,7 +116,8 @@ class NetZero:
                 iface=self.interface,
                 prn=self.network_scan_packet_handler, 
                 store=False,
-                stop_filter=is_stopped
+                stop_filter=is_stopped,
+                
             )
 
         self.set_status('Network scan concluded.')
