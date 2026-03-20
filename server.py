@@ -8,8 +8,6 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from scapy.all import conf
-
 from utils import ensure_root
 from netzero import NetZero
 
@@ -108,5 +106,4 @@ def stop_scan():
 
 if __name__ == '__main__':
     ensure_root()
-    conf.use_pcap = True
     uvicorn.run(app, host='0.0.0.0', port=80)
