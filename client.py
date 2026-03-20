@@ -5,7 +5,7 @@ import threading
 import json
 import sys
 
-PI_IP = '10.42.0.162'  
+PI_IP = '172.16.0.1'
 PORT = 80
 
 HTTP_URL = f"http://{PI_IP}:{PORT}/api/v1"

@@ -47,10 +47,11 @@ class NetZero:
         self.set_status(f'Entering monitor mode...')
         mon_interface = self.interface + 'mon'
 
-        subprocess.run(['systemctl', 'stop', 'NetworkManager'])
-        subprocess.run(['systemctl', 'stop', 'wpa_supplicant'])
-        subprocess.run(['iw', 'dev', self.interface, 'interface', 'add', mon_interface, 'type', 'monitor'])
+        # subprocess.run(['systemctl', 'stop', 'NetworkManager'])
+        # subprocess.run(['systemctl', 'stop', 'wpa_supplicant'])
+        subprocess.run(['nmcli', 'device', 'set', self.interface, 'managed', 'no'])
         subprocess.run(['ip', 'link', 'set', self.interface, 'down'])
+        subprocess.run(['iw', 'dev', self.interface, 'interface', 'add', mon_interface, 'type', 'monitor'])
         subprocess.run(['ip', 'link', 'set', mon_interface, 'up'])
 
         self.interface = mon_interface
@@ -59,10 +60,11 @@ class NetZero:
     def disable_monitor_mode(self):
         self.set_status(f'Disabling monitor mode...')
         managed_interface = self.interface[:-3]
-    
-        subprocess.run(['iw', 'dev', self.interface, 'del'], )
-        subprocess.run(['ip', 'link', 'set', managed_interface, 'up'], )
-        subprocess.run(['systemctl', 'start', 'NetworkManager'], )
+
+        subprocess.run(['ip', 'link', 'set', self.interface, 'down'])
+        subprocess.run(['iw', 'dev', self.interface, 'del'])
+        subprocess.run(['ip', 'link', 'set', managed_interface, 'up'])
+        subprocess.run(['nmcli', 'device', 'set', self.interface, 'managed', 'yes'])
 
         self.interface = managed_interface
         self.set_status(f'Monitor mode disabled.')
