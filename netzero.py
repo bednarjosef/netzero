@@ -16,7 +16,7 @@ class NetZero:
         conf.sniff_promisc = False
         self.set_status = status_callback
         self.add_data = data_callback
-        self.interface = 'wlp193s0'  # make selection for this
+        self.interface = 'wlan0'  # make selection for this wlp193s0
         self.networks = {}
 
         self.current_task = 'idle'
