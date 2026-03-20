@@ -119,6 +119,7 @@ class NetZero:
             )
 
         self.set_status('Network scan concluded.')
+        self.disable_monitor_mode()
         self.set_current_task('idle')
 
     def scan_networks(self):
